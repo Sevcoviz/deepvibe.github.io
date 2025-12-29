@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepVibe // AI Recommendation Engine</title>
+    
+    <!-- External Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <!-- Local Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+
+<body class="custom-scrollbar">
+    
+    <!-- 1. INTRODUCTION PANEL (HERO) -->
+    <section class="min-h-screen flex flex-col justify-center items-center p-6 text-center relative overflow-hidden">
+        <div class="absolute w-[500px] h-[500px] bg-emerald-500/10 blur-[120px] rounded-full -top-24 -left-24"></div>
+        
+        <div class="z-10 max-w-4xl">
+            <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-emerald-400 text-base font-bold mb-8">
+                <i data-lucide="sparkles" size="16"></i>
+                POWERED BY CI METHODS | CHARLES UNIVERSITY  
+            </div>
+            <h1 class="text-7xl md:text-9xl font-800 tracking-tighter text-white mb-6 emerald-glow">
+                DEEP<span class="text-emerald-500">VIBE</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-gray-400 font-light leading-relaxed mb-10">
+                The bridge between your listening history and your next obsession. 
+                Upload your Spotify data and let our AI decode your music DNA.
+            </p>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#engine" class="emerald-gradient text-black font-800 px-8 py-4 rounded-2xl hover:scale-105 transition shadow-xl shadow-emerald-500/20">
+                    Open Analysis Engine
+                </a>
+                <a href="#model" class="bg-neutral-900 border border-neutral-800 text-white font-semibold px-8 py-4 rounded-2xl hover:bg-neutral-800 transition">
+                    Explore Architecture
+                </a>
+                <a href="#manual" class="bg-neutral-900 border border-neutral-800 text-white font-semibold px-8 py-4 rounded-2xl hover:bg-neutral-800 transition">
+                    How to get my data?
+                </a>
+            </div>
+        </div>
+        
+        <div class="absolute bottom-10 animate-bounce text-neutral-600">
+            <i data-lucide="chevron-down" size="32"></i>
+        </div>
+    </section>
+
+    <!-- 2. ANALYSIS ENGINE -->
+    <section id="engine" class="min-h-screen p-6 md:p-12 flex flex-col gap-8 bg-[#080808]">
+        <div class="flex flex-col md:flex-row justify-between items-end gap-4">
+            <div>
+                <h2 class="text-3xl font-bold text-white">Analysis Engine</h2>
+                <p class="text-neutral-500">Drop your .zip file to begin the prediction.</p>
+            </div>
+            <div class="px-4 py-2 bg-neutral-900 rounded-xl border border-neutral-800 text-xs font-mono text-emerald-500">
+                STATUS: LIVE_READY
+            </div>
+        </div>
+
+        <div class="flex-1 grid grid-cols-12 gap-6 min-h-[600px]">
+            <!-- Upload Panel -->
+            <div class="col-span-12 lg:col-span-4 flex flex-col gap-6">
+                <!-- Mode Selection Card -->
+                <div class="bento-panel p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="sliders" size="18" class="text-emerald-500"></i>
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Discovery Mode</h3>
+                    </div>
+                    
+                    <div class="mode-toggle mb-4">
+                        <div class="mode-option active" id="standardMode" onclick="selectMode('standard')">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="trending-up" size="16"></i>
+                                <span>Standard</span>
+                            </div>
+                        </div>
+                        <div class="mode-option inactive" id="hiddenGemsMode" onclick="selectMode('hidden')">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="gem" size="16"></i>
+                                <span>Hidden Gems</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="modeDescription" class="text-xs text-neutral-400 leading-relaxed">
+                        <p><strong class="text-emerald-400">Standard Mode:</strong> Finds highest correlation matches for your current vibe across all popularity levels.</p>
+                    </div>
+                </div>
+
+                <!-- Upload Card -->
+                <div class="bento-panel flex-1 p-8 flex flex-col justify-center items-center text-center group border-dashed border-2 border-neutral-800">
+                    <div class="w-16 h-16 bg-neutral-800 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-emerald-500/20 group-hover:scale-110 transition-all">
+                        <i data-lucide="upload" class="text-emerald-500"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white">Import History</h3>
+                    <p class="text-sm text-neutral-500 mb-6">Drop your Spotify .zip file here.</p>
+                    <input type="file" id="fileInput" class="hidden" accept=".zip">
+                    <button onclick="document.getElementById('fileInput').click()" class="bg-white text-black font-800 py-3 px-8 rounded-xl text-sm hover:bg-emerald-400 transition mb-4">
+                        Choose File
+                    </button>
+                    <div id="uploadStatus" class="text-xs text-neutral-500"></div>
+                    <a href="#manual" class="flex items-center gap-2 text-xs text-neutral-400 hover:text-emerald-400 transition underline mt-4">
+                        <i data-lucide="help-circle" size="14"></i>
+                        How do I get my streaming history?
+                    </a>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="col-span-12 lg:col-span-8 bento-panel overflow-hidden flex flex-col">
+                <div class="p-6 border-b border-neutral-800 flex justify-between items-center bg-neutral-900/30">
+                    <span class="text-sm font-bold tracking-widest text-neutral-400 uppercase">AI Recommendations</span>
+                    <span id="resultsModeIndicator" class="text-xs text-emerald-500 font-mono"></span>
+                </div>
+                <div class="flex-1 overflow-y-auto custom-scrollbar p-4" id="resultsTable">
+                    <div class="flex flex-col items-center justify-center h-full text-neutral-700">
+                        <i data-lucide="database" size="48" class="mb-4 opacity-20"></i>
+                        <p class="text-sm">Awaiting data input...</p>
+                    </div>
+                </div>
+            </div>
+
+
+            
+            <!-- User Analysis Panel (Initially Hidden) -->
+            <div id="statsPanel" class="col-span-12 bento-panel p-8 border-t border-emerald-500/20">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
+                    <div class="flex items-center gap-2">
+                        <i data-lucide="bar-chart-3" class="text-emerald-500"></i>
+                        <h3 class="text-xl font-bold text-white uppercase tracking-widest">Music DNA Profile</h3>
+                    </div>
+                    
+                    <!-- Year Selector Tabs -->
+                    <div id="yearTabs" class="flex flex-wrap gap-2">
+                        <!-- Tabs will be injected here by JS -->
+                        <span class="text-xs text-neutral-600 font-mono">Awaiting Data...</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                    <!-- Total Streams -->
+                    <div class="bg-neutral-900/50 p-6 rounded-2xl border border-neutral-800">
+                        <p class="text-xs text-neutral-500 uppercase font-bold mb-2">Total Streams</p>
+                        <h4 id="stat-total-streams" class="text-3xl font-800 text-white">-</h4>
+                    </div>
+                    
+                    <!-- Top Artist -->
+                    <div class="bg-neutral-900/50 p-6 rounded-2xl border border-neutral-800">
+                        <p class="text-xs text-neutral-500 uppercase font-bold mb-2">Top Artist</p>
+                        <h4 id="stat-top-artist" class="text-xl font-800 text-emerald-400 truncate">-</h4>
+                    </div>
+
+                    <!-- Top Track -->
+                    <div class="bg-neutral-900/50 p-6 rounded-2xl border border-neutral-800">
+                        <p class="text-xs text-neutral-500 uppercase font-bold mb-2">Most Played Track</p>
+                        <h4 id="stat-top-track" class="text-xl font-800 text-white truncate">-</h4>
+                    </div>
+
+                    <!-- Listening Time -->
+                    <div class="bg-neutral-900/50 p-6 rounded-2xl border border-neutral-800">
+                        <p class="text-xs text-neutral-500 uppercase font-bold mb-2">Hours Played</p>
+                        <h4 id="stat-hours" class="text-3xl font-800 text-white">-</h4>
+                    </div>
+
+                    <!-- Diversity Index -->
+                    <div class="bg-neutral-900/50 p-6 rounded-2xl border border-neutral-800">
+                        <p class="text-xs text-neutral-500 uppercase font-bold mb-2">Unique Artists</p>
+                        <h4 id="stat-unique" class="text-3xl font-800 text-purple-400">-</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- 3. MODEL ARCHITECTURE -->
+    <section id="model" class="min-h-screen p-6 md:p-24 bg-[#0a0a0a] border-y border-neutral-900">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-emerald-500/30 bg-emerald-500/5 text-emerald-400 text-xs font-bold mb-4">
+                    <i data-lucide="brain" size="14"></i>
+                    NEURAL ARCHITECTURE
+                </div>
+                <h2 class="text-4xl font-800 text-white mb-4">Hybrid DeepVibe VAE</h2>
+                <p class="text-neutral-400 max-w-2xl mx-auto">A variational autoencoder that learns your musical DNA by fusing listening patterns with acoustic features.</p>
+            </div>
+
+            <!-- Architecture Diagram -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-12">
+                <!-- Encoder Stage -->
+                <div class="bento-panel p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-blue-500/20 flex items-center justify-center">
+                            <i data-lucide="arrow-down-to-line" class="text-blue-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Encoder</h3>
+                    </div>
+                    <p class="text-sm text-neutral-400 mb-6">Compresses your listening history and audio profile into a compact latent representation.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="px-2 py-1 bg-neutral-900 rounded text-xs font-mono text-emerald-400">Input</div>
+                            <div class="text-xs text-neutral-500">10,012 dims</div>
+                        </div>
+                        <div class="h-8 flex items-center">
+                            <div class="w-full h-px bg-gradient-to-r from-blue-500/50 to-transparent"></div>
+                        </div>
+                        <div class="neural-layer">
+                            <span class="text-xs font-mono">Linear(1024)</span>
+                            <span class="text-xs text-neutral-600">→ SELU</span>
+                        </div>
+                        <div class="neural-layer">
+                            <span class="text-xs font-mono">Linear(512)</span>
+                            <span class="text-xs text-neutral-600">→ SELU</span>
+                        </div>
+                        <div class="neural-layer">
+                            <span class="text-xs font-mono">Linear(256)</span>
+                            <span class="text-xs text-neutral-600">→ SELU</span>
+                        </div>
+                        <div class="h-8 flex items-center">
+                            <div class="w-full h-px bg-gradient-to-r from-blue-500/50 to-transparent"></div>
+                        </div>
+                        <div class="flex gap-2">
+                            <div class="flex-1 px-2 py-1 bg-purple-900/30 border border-purple-500/30 rounded text-xs font-mono text-purple-400 text-center">μ (256)</div>
+                            <div class="flex-1 px-2 py-1 bg-purple-900/30 border border-purple-500/30 rounded text-xs font-mono text-purple-400 text-center">σ (256)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Latent Space -->
+                <div class="bento-panel p-6 flex flex-col justify-center items-center text-center">
+                    <div class="relative mb-6">
+                        <div class="w-32 h-32 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 flex items-center justify-center relative overflow-hidden">
+                            <div class="absolute inset-0 bg-gradient-to-br from-purple-500/10 to-transparent animate-pulse"></div>
+                            <i data-lucide="sparkles" size="48" class="text-purple-400 z-10"></i>
+                        </div>
+                        <div class="absolute -top-2 -right-2 px-2 py-1 bg-purple-500 rounded-lg text-xs font-bold text-black">256D</div>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-2">Latent Space</h3>
+                    <p class="text-sm text-neutral-400 mb-4">Your compressed musical identity—a continuous vector capturing taste patterns.</p>
+                    <div class="px-3 py-1 rounded-full bg-purple-900/30 border border-purple-500/30 text-xs font-mono text-purple-400">
+                        z ~ N(μ, σ²)
+                    </div>
+                </div>
+
+                <!-- Decoder Stage -->
+                <div class="bento-panel p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 flex items-center justify-center">
+                            <i data-lucide="arrow-up-from-line" class="text-emerald-400"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">Decoder</h3>
+                    </div>
+                    <p class="text-sm text-neutral-400 mb-6">Reconstructs ideal listening preferences from latent representation.</p>
+                    
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-3">
+                            <div class="px-2 py-1 bg-purple-900/30 border border-purple-500/30 rounded text-xs font-mono text-purple-400">z (256)</div>
+                        </div>
+                        <div class="h-8 flex items-center">
+                            <div class="w-full h-px bg-gradient-to-r from-emerald-500/50 to-transparent"></div>
+                        </div>
+                        <div class="neural-layer">
+                            <span class="text-xs font-mono">Linear(256)</span>
+                            <span class="text-xs text-neutral-600">→ SELU</span>
+                        </div>
+                        <div class="neural-layer">
+                            <span class="text-xs font-mono">Linear(512)</span>
+                            <span class="text-xs text-neutral-600">→ SELU</span>
+                        </div>
+                        <div class="neural-layer">
+                            <span class="text-xs font-mono">Linear(1024)</span>
+                            <span class="text-xs text-neutral-600">→ SELU</span>
+                        </div>
+                        <div class="neural-layer">
+                            <span class="text-xs font-mono">Linear(10000)</span>
+                        </div>
+                        <div class="h-8 flex items-center">
+                            <div class="w-full h-px bg-gradient-to-r from-emerald-500/50 to-transparent"></div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="px-2 py-1 bg-neutral-900 rounded text-xs font-mono text-emerald-400">Predictions</div>
+                            <div class="text-xs text-neutral-500">10,000 tracks</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Details -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                <div class="bento-panel p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="settings" size="18" class="text-emerald-500"></i>
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider">Key Components</h3>
+                    </div>
+                    <ul class="space-y-3 text-sm">
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="check-circle" size="16" class="text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-white">Dual Input Fusion:</strong>
+                                <span class="text-neutral-400"> Combines 10,000-dim interaction vector with 12-dim audio features (acousticness, energy, valence, etc.)</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="check-circle" size="16" class="text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-white">SELU Activation:</strong>
+                                <span class="text-neutral-400"> Self-normalizing activation ensures stable training and prevents vanishing gradients</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="check-circle" size="16" class="text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-white">Reparameterization Trick:</strong>
+                                <span class="text-neutral-400"> Enables backpropagation through stochastic sampling (z = μ + σ · ε)</span>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i data-lucide="check-circle" size="16" class="text-emerald-500 mt-0.5 flex-shrink-0"></i>
+                            <div>
+                                <strong class="text-white">Gradient Clipping:</strong>
+                                <span class="text-neutral-400"> Log-variance clamped to [-10, 10] for numerical stability</span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="bento-panel p-6">
+                    <div class="flex items-center gap-2 mb-4">
+                        <i data-lucide="zap" size="18" class="text-emerald-500"></i>
+                        <h3 class="text-sm font-bold text-white uppercase tracking-wider">How It Works</h3>
+                    </div>
+                    <ol class="space-y-4 text-sm">
+                        <li class="flex gap-3">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">1</span>
+                            <div class="text-neutral-400">Your streaming history is converted into a sparse interaction vector showing play counts per track</div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">2</span>
+                            <div class="text-neutral-400">Weighted audio features are computed from your listening patterns</div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">3</span>
+                            <div class="text-neutral-400">The encoder learns a 256-dimensional "taste signature" in latent space</div>
+                        </li>
+                        <li class="flex gap-3">
+                            <span class="flex-shrink-0 w-6 h-6 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xs font-bold">4</span>
+                            <div class="text-neutral-400">The decoder reconstructs predicted preferences, which are used to find similar tracks via cosine similarity</div>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bento-panel p-4 text-center">
+                    <div class="text-2xl font-bold text-emerald-400 mb-1">10,012</div>
+                    <div class="text-xs text-neutral-500 uppercase tracking-wider">Input Dimensions</div>
+                </div>
+                <div class="bento-panel p-4 text-center">
+                    <div class="text-2xl font-bold text-purple-400 mb-1">256</div>
+                    <div class="text-xs text-neutral-500 uppercase tracking-wider">Latent Space</div>
+                </div>
+                <div class="bento-panel p-4 text-center">
+                    <div class="text-2xl font-bold text-blue-400 mb-1">6</div>
+                    <div class="text-xs text-neutral-500 uppercase tracking-wider">Hidden Layers</div>
+                </div>
+                <div class="bento-panel p-4 text-center">
+                    <div class="text-2xl font-bold text-emerald-400 mb-1">SELU</div>
+                    <div class="text-xs text-neutral-500 uppercase tracking-wider">Activation</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. MANUAL PAGE -->
+    <section id="manual" class="min-h-screen p-6 md:p-24 bg-black border-y border-neutral-900">
+        <div class="max-w-4xl mx-auto">
+            <h2 class="text-4xl font-800 text-white mb-4">The Spotify Manual</h2>
+            <p class="text-neutral-400 mb-12">Follow these steps to export your raw data package.</p>
+            
+            <div class="space-y-6">
+                <div class="step-card p-6 rounded-r-2xl">
+                    <h4 class="text-emerald-500 font-bold mb-1">STEP 01</h4>
+                    <p class="text-white font-bold text-lg mb-2">Access Privacy Settings</p>
+                    <p class="text-neutral-400 text-sm leading-relaxed">Log into your account on <a href="https://spotify.com/account/privacy" target="_blank" class="text-emerald-400 underline">spotify.com/account/privacy</a>. Note: This cannot be done via the mobile or desktop app.</p>
+                </div>
+
+                <div class="step-card p-6 rounded-r-2xl">
+                    <h4 class="text-emerald-500 font-bold mb-1">STEP 02</h4>
+                    <p class="text-white font-bold text-lg mb-2">Request "Extended Streaming History"</p>
+                    <p class="text-neutral-400 text-sm leading-relaxed">Scroll down to "Download your data". Check the box for <b>Extended streaming history</b>. This provides the JSON files needed for our AI to be accurate.</p>
+                </div>
+
+                <div class="step-card p-6 rounded-r-2xl">
+                    <h4 class="text-emerald-500 font-bold mb-1">STEP 03</h4>
+                    <p class="text-white font-bold text-lg mb-2">Confirm & Wait</p>
+                    <p class="text-neutral-400 text-sm leading-relaxed">Spotify will send a confirmation email. Click the link inside. It takes 5-30 days for Spotify to prepare your package (they will email you once it's ready).</p>
+                </div>
+
+                <div class="step-card p-6 rounded-r-2xl">
+                    <h4 class="text-emerald-500 font-bold mb-1">STEP 04</h4>
+                    <p class="text-white font-bold text-lg mb-2">Extract and Upload</p>
+                    <p class="text-neutral-400 text-sm leading-relaxed">You will receive a <code class="bg-neutral-800 px-1 text-emerald-400">.zip</code> file. Drag it into DeepVibe!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. CONTRIBUTORS & CONTACT -->
+    <footer class="p-12 md:p-24 bg-[#050505] text-center">
+        <div class="max-w-6xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 mb-20 text-left">
+                <!-- Info -->
+                <div class="col-span-1">
+                    <h3 class="text-xl font-bold text-white mb-4">DeepVibe Project</h3>
+                    <p class="text-neutral-500 text-sm leading-relaxed">
+                        An open-source initiative to put music data into the hands of listeners. Built with 
+                        Machine Learning and a passion for deep cuts.
+                    </p>
+                </div>
+                <!-- Contributors -->
+                <div class="col-span-1">
+                    <h3 class="text-xl font-bold text-white mb-4">Contributors</h3>
+                    <ul class="text-neutral-500 text-sm space-y-2">
+                        <li class="hover:text-emerald-400 cursor-default transition flex items-center gap-2">
+                            <i data-lucide="code-2" size="14"></i> Lead Developer: @S_Lens_AI
+                        </li>
+                        <li class="hover:text-emerald-400 cursor-default transition flex items-center gap-2">
+                            <i data-lucide="brain" size="14"></i> ML Engineer: @MusicBrains
+                        </li>
+                        <li class="hover:text-emerald-400 cursor-default transition flex items-center gap-2">
+                            <i data-lucide="palette" size="14"></i> UI/UX Design: @EmeraldPixel
+                        </li>
+                    </ul>
+                </div>
+                <!-- Contact -->
+                <div class="col-span-1">
+                    <h3 class="text-xl font-bold text-white mb-4">Get in Touch</h3>
+                    <div class="flex gap-4">
+                        <a href="#" class="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center hover:bg-emerald-500 transition hover:text-black">
+                            <i data-lucide="github" size="18"></i>
+                        </a>
+                        <a href="mailto:sevcovic.zuzana@gmail.com" class="w-10 h-10 rounded-full bg-neutral-900 flex items-center justify-center hover:bg-emerald-500 transition hover:text-black">
+                            <i data-lucide="mail" size="18"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Footer -->
+    <div class="p-12 text-center text-neutral-600 text-xs">
+        <p>© 2025 DEEPVIBE RESEARCH. ALL RIGHTS RESERVED.</p>
+    </div>
+
+    <!-- Local JavaScript -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>lucide.createIcons();</script>
+</body>
+</html>
